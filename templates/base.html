@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ title }}{% if title != '無卡不歡' %} · 無卡不歡{% endif %}</title>
+  <meta name="description" content="{{ description }}">
+  <meta name="theme-color" content="#f8f7f3">
+  {% if canonical %}<link rel="canonical" href="{{ canonical }}">{% endif %}
+  <link rel="icon" href="{{ url('/favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url('/style.css') }}">
+  <script defer src="{{ url('/app.js') }}"></script>
+</head>
+<body data-base="{{ base }}" data-page="{{ page_type }}">
+<a class="skip" href="#main">跳到正文</a>
+<header class="site-header wrap">
+  <a class="brand" href="{{ url('/') }}" aria-label="無卡不歡首頁"><span class="monogram">WK<span>↗</span></span><span class="wordmark">無卡不歡<small>NO CARD, NO FUN.</small></span></a>
+  <nav aria-label="主導覽"><a href="{{ url('/#archive') }}">文章</a><a href="{{ url('/category/cards/') }}">銀行與卡</a><a href="{{ url('/about/') }}">關於</a><a class="search-link" href="{{ url('/?search=1#archive') }}" aria-label="搜尋文章">搜尋 <span>⌕</span></a></nav>
+</header>
+<main id="main" class="wrap">{% block content %}{% endblock %}</main>
+<footer class="site-footer wrap"><span>無卡不歡 <span class="muted">/</span> 文章典藏</span><span>銀行帳戶 · 電話卡 · 海外生活</span><a href="{{ url('/') }}">回到首頁 ↑</a></footer>
+</body></html>

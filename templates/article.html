@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="breadcrumb"><a href="{{ url('/') }}">首頁</a><span>/</span>{% for c in post.categories %}<a href="{{ url('/category/'+c.slug+'/') }}">{{ c.name }}</a>{% endfor %}</div>
+<header class="article-heading"><div class="eyebrow">FIELD NOTE / {{ post.id }}</div><h1>{{ post.title }}</h1><div class="article-meta"><time datetime="{{ post.date }}">{{ post.date }}</time><span>{{ post.author }}</span><span>約 {{ post.minutes }} 分鐘閱讀</span></div></header>
+<div class="article-layout"><article class="article-body"><p class="archive-note">歷史文章 · 保留原文與發布日期，文中產品及流程以當時記錄為準。</p>{{ body|safe }}
+  {% if post.tags %}<div class="tags">{% for t in post.tags %}<a href="{{ url('/?q='+t|urlencode+'#archive') }}"># {{ t }}</a>{% endfor %}</div>{% endif %}
+  <nav class="article-pagination" aria-label="上一篇與下一篇">{% if previous %}<a href="{{ url(previous.path) }}"><small>較新的文章</small>{{ previous.title }}</a>{% endif %}{% if next %}<a href="{{ url(next.path) }}"><small>較早的文章</small>{{ next.title }}</a>{% endif %}</nav>
+</article><aside class="article-aside"><div class="aside-inner"><p class="aside-label">本篇目錄</p>{{ toc|safe }}<a class="back-archive" href="{{ url('/#archive') }}">← 瀏覽全部文章</a></div></aside></div>
+{% endblock %}

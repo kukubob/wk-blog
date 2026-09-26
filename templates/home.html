@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="intro">
+  <div class="eyebrow"><span class="dot"></span> THE FIELD NOTES <span class="edition">2021 — 2024</span></div>
+  <h1>{% if category %}{{ category.name }}<span class="red">.</span>{% else %}一張卡，<br>多一種生活的可能<span class="red">。</span>{% endif %}</h1>
+  <div class="intro-bottom"><p>關於銀行帳戶、電話卡與海外生活的親歷記錄。<br>從第一步申請，到每一個值得留下的細節。</p><div class="stat"><strong>{{ posts|length }}</strong><span>篇文章{% if not category %} · 持續可讀{% endif %}</span></div></div>
+</section>
+<section id="archive" class="archive" aria-label="文章目錄">
+  <div class="section-heading"><h2>文章目錄 <span>THE ARCHIVE</span></h2><span id="result-count">{{ posts|length }} 篇</span></div>
+  <div class="archive-tools"><div class="filters" role="group" aria-label="文章分類">
+    <button class="filter active" data-category="">全部</button>
+    {% for c in categories %}<button class="filter" data-category="{{ c.slug }}">{{ c.name }} <small>{{ c.count }}</small></button>{% endfor %}
+  </div><label class="search-box"><span>⌕</span><input id="search" type="search" placeholder="搜尋文章、關鍵字…" aria-label="搜尋文章全文" autocomplete="off"><kbd>/</kbd></label></div>
+  <div id="post-list" class="post-list">
+  {% for p in posts %}<article class="post-row" data-id="{{ p.id }}" data-categories="{{ p.category_slugs|join(' ') }}">
+    <div class="post-date"><time datetime="{{ p.date }}">{{ p.date }}</time><span>{{ '%03d'|format(loop.index) }}</span></div>
+    <div class="post-summary"><div class="post-category">{{ p.categories|map(attribute='name')|join(' / ') }}</div><h3><a href="{{ url(p.path) }}">{{ p.title }}</a></h3><p>{{ p.excerpt }}</p></div><a class="row-arrow" href="{{ url(p.path) }}" aria-label="閱讀{{ p.title }}">↗</a>
+  </article>{% endfor %}</div>
+  <p id="no-results" class="empty" hidden>沒有找到相關文章，換個關鍵字試試。</p>
+  <p id="search-status" class="muted" aria-live="polite"></p>
+</section>
+{% endblock %}
