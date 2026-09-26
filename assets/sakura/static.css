@@ -2,6 +2,7 @@
 [hidden]{display:none!important}
 .search-form--modal.is-visible{visibility:visible;opacity:1;transform:translateY(0)}
 .static-nav-open #mo-nav{width:250px;display:block;left:0;transform:translateX(0);z-index:99999}
+#mo-nav ul li a{display:block}
 .static-nav-open #main-container{transform:translateX(250px)}
 .lower nav.show{display:block!important}
 .missing-media{display:block;padding:1em;border:1px dashed #ddd;color:#888}
