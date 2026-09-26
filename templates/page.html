@@ -1,2 +1,1 @@
-{% extends 'base.html' %}
-{% block content %}<section class="text-page"><div class="eyebrow">WK / ARCHIVE</div><h1>{{ title }}</h1><div class="article-body">{{ body|safe }}</div><a class="button" href="{{ url('/#archive') }}">瀏覽文章 ↗</a></section>{% endblock %}
+{% extends "base.html" %}{% block content %}<div id="primary" class="content-area"><main id="main" class="site-main"><article class="page"><header class="entry-header"><h1 class="entry-title">{{ title }}</h1><hr></header><div class="entry-content">{{ body|safe }}</div></article></main></div>{% endblock %}

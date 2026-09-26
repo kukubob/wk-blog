@@ -35,13 +35,13 @@ def main():
     shutil.copytree(ROOT/'assets',out)
     (out/'.nojekyll').touch()
     url = lambda path: base + quote(path, safe='/#?=&%')
+    presentation = json.loads((ROOT/'content/presentation.json').read_text())
     posts = []
     for path in (ROOT/'content/posts').glob('*.md'):
         _,front,body = path.read_text().split('---',2)
         data = yaml.safe_load(front)
+        data.update(thumbnail=presentation[str(data['id'])]['thumbnail'], original_excerpt=presentation[str(data['id'])]['excerpt'])
         data.update(markdown=body, category_slugs=[c['slug'] for c in data['categories']])
-        # These exported section headings were bold paragraphs in WordPress.
-        body = re.sub(r'^\*\*([^*\n]{2,45})\*\*\s*$', r'## \1', body, flags=re.M)
         body = re.sub(r'~~([^\n]+?)~~', r'<del>\1</del>', body)
         md = markdown.Markdown(extensions=['tables','fenced_code','toc','sane_lists'],extension_configs={'toc':{'permalink':False}})
         rendered = md.convert(body)
@@ -98,7 +98,7 @@ def main():
         target=out/path.lstrip('/')
         if not target.suffix: target=target/'index.html'
         target.parent.mkdir(parents=True,exist_ok=True)
-        common=dict(url=url,base=base,title='無卡不歡',description='銀行帳戶、電話卡與海外生活的親歷記錄。無卡不歡博客文章典藏。',canonical=site+quote(path,safe='/'),page_type='page')
+        common=dict(url=url,base=base,title='無卡不歡博客',description='銀行帳戶、電話卡與海外生活的親歷記錄。無卡不歡博客文章典藏。',canonical=site+quote(path,safe='/'),page_type='page',page_number=1,search_mode=False,newer=None,older=None)
         common.update(context)
         target.write_text(env.get_template(template).render(**common))
     cats={}
@@ -106,10 +106,19 @@ def main():
         for c in p['categories']:
             cats.setdefault(c['slug'],{**c,'count':0})['count']+=1
     categories=sorted(cats.values(),key=lambda x:-x['count'])
-    emit('/','home.html',posts=posts,categories=categories,category=None,page_type='home')
+    def listing(selected, prefix, category=None):
+        pages=math.ceil(len(selected)/10)
+        for number in range(1,pages+1):
+            path=prefix if number==1 else prefix+'page/'+str(number)+'/'
+            newer=(prefix if number==2 else prefix+'page/'+str(number-1)+'/') if number>1 else None
+            older=prefix+'page/'+str(number+1)+'/' if number<pages else None
+            emit(path,'home.html',posts=selected[(number-1)*10:number*10],categories=categories,category=category,page_type='home',page_number=number,newer=newer,older=older)
+    listing(posts,'/')
     for c in categories:
         selected=[p for p in posts if c['slug'] in p['category_slugs']]
-        emit('/category/'+c['slug']+'/','home.html',title=c['name'],posts=selected,categories=[c],category=c,page_type='home')
+        listing(selected,'/'+c['slug']+'/',c)
+        listing(selected,'/category/'+c['slug']+'/',c)
+    emit('/search/','home.html',posts=posts,categories=categories,category=None,page_type='home',search_mode=True)
     for i,p in enumerate(posts):
         emit(p['path'],'article.html',title=p['title'],description=p['excerpt'],post=p,body=rewrite(p['html']),toc=p['toc'],previous=posts[i-1] if i else None,next=posts[i+1] if i+1<len(posts) else None,page_type='article')
     for old,new in aliases.items():
@@ -126,7 +135,7 @@ def main():
     emit('/404.html','page.html',title='沒有找到這個頁面',body='<p>連結可能已變更。請返回文章目錄，用標題或關鍵字查找。</p>',canonical=None)
     (out/'search.json').write_text(json.dumps([{'id':p['id'],'title':p['title'],'path':p['path'],'text':p['text'],'tags':p['tags']} for p in posts],ensure_ascii=False))
     (out/'post-map.json').write_text(json.dumps(by_id,ensure_ascii=False))
-    paths=['/','/about/']+[p['path'] for p in posts]+['/category/'+c['slug']+'/' for c in categories]
+    paths=['/','/about/']+[p['path'] for p in posts]+['/'+c['slug']+'/' for c in categories]
     (out/'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'+''.join('<url><loc>'+html.escape(site+quote(p,safe='/'))+'</loc></url>' for p in paths)+'</urlset>')
     (out/'robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: '+site+'/sitemap.xml\n')
     total=sum(f.stat().st_size for f in out.rglob('*') if f.is_file())

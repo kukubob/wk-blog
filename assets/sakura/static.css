@@ -1,0 +1,8 @@
+/* Only static-host interaction adapters; visual rules remain in the original Sakura styles. */
+[hidden]{display:none!important}
+.search-form--modal.is-visible{visibility:visible;opacity:1;transform:translateY(0)}
+.static-nav-open #mo-nav{width:250px;display:block;left:0;transform:translateX(0);z-index:99999}
+.static-nav-open #main-container{transform:translateX(250px)}
+.lower nav.show{display:block!important}
+.missing-media{display:block;padding:1em;border:1px dashed #ddd;color:#888}
+@media(max-width:860px){.site-header .lower{display:none}}

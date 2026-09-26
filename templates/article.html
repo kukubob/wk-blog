@@ -1,9 +1,3 @@
-{% extends 'base.html' %}
-{% block content %}
-<div class="breadcrumb"><a href="{{ url('/') }}">首頁</a><span>/</span>{% for c in post.categories %}<a href="{{ url('/category/'+c.slug+'/') }}">{{ c.name }}</a>{% endfor %}</div>
-<header class="article-heading"><div class="eyebrow">FIELD NOTE / {{ post.id }}</div><h1>{{ post.title }}</h1><div class="article-meta"><time datetime="{{ post.date }}">{{ post.date }}</time><span>{{ post.author }}</span><span>約 {{ post.minutes }} 分鐘閱讀</span></div></header>
-<div class="article-layout"><article class="article-body"><p class="archive-note">歷史文章 · 保留原文與發布日期，文中產品及流程以當時記錄為準。</p>{{ body|safe }}
-  {% if post.tags %}<div class="tags">{% for t in post.tags %}<a href="{{ url('/?q='+t|urlencode+'#archive') }}"># {{ t }}</a>{% endfor %}</div>{% endif %}
-  <nav class="article-pagination" aria-label="上一篇與下一篇">{% if previous %}<a href="{{ url(previous.path) }}"><small>較新的文章</small>{{ previous.title }}</a>{% endif %}{% if next %}<a href="{{ url(next.path) }}"><small>較早的文章</small>{{ next.title }}</a>{% endif %}</nav>
-</article><aside class="article-aside"><div class="aside-inner"><p class="aside-label">本篇目錄</p>{{ toc|safe }}<a class="back-archive" href="{{ url('/#archive') }}">← 瀏覽全部文章</a></div></aside></div>
-{% endblock %}
+{% extends "base.html" %}{% block hero %}<div class="pattern-center-blank"></div><div class="pattern-center single-center"><div class="pattern-attachment-img" style="background-image:url('{{ url(post.thumbnail) }}')"></div><header class="pattern-header single-header"><h1 class="entry-title">{{ post.title }}</h1><p class="entry-census">{{ post.author }} <span class="bull">·</span> {{ post.date }}</p></header></div>{% endblock %}
+{% block content %}<div id="primary" class="content-area"><main id="main" class="site-main" role="main"><article id="post-{{ post.id }}" class="post type-post status-publish format-standard has-post-thumbnail hentry"><div class="entry-content">{{ body|safe }}</div><footer class="post-footer"><div class="post-tags"><i class="iconfont icon-tags"></i> {{ post.tags|join(' ') }}</div></footer></article>
+<nav class="navigation post-navigation" aria-label="文章導覽">{% if previous %}<a href="{{ url(previous.path) }}">{{ previous.title }}</a>{% endif %} {% if next %}<a href="{{ url(next.path) }}">{{ next.title }}</a>{% endif %}</nav></main></div>{% endblock %}

@@ -1,0 +1,5 @@
+<article class="post post-list-thumb post-list-show" data-id="{{ p.id }}" itemscope itemtype="http://schema.org/BlogPosting">
+<div class="post-thumb"><a href="{{ url(p.path) }}"><img src="{{ url(p.thumbnail) }}" alt="{{ p.title }}" loading="lazy"></a></div>
+<div class="post-content-wrap"><div class="post-content"><div class="post-date"><i class="iconfont icon-time"></i> Posted on {{ p.date }}</div>
+<a class="post-title" href="{{ url(p.path) }}"><h3>{{ p.title }}</h3></a><div class="post-meta"><span><i class="iconfont icon-file"></i> <a href="{{ url('/'+p.categories[0].slug+'/') }}">{{ p.categories[0].name }}</a></span></div>
+<div class="float-content"><p>{{ p.original_excerpt }}</p><div class="post-bottom"><a class="button-normal" href="{{ url(p.path) }}" aria-label="閱讀{{ p.title }}"><i class="iconfont icon-caidan"></i></a></div></div></div></div></article>

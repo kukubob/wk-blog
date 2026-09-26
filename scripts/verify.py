@@ -17,6 +17,9 @@ for entry in media:
     if entry['status']=='ok':
         asset=out/entry['path'].lstrip('/')
         assert hashlib.sha256(asset.read_bytes()).hexdigest()==entry['sha256'], f'Media differs: {asset}'
+for entry in json.loads((ROOT/'theme-media-status.json').read_text()):
+    asset=out/entry['path'].lstrip('/')
+    assert hashlib.sha256(asset.read_bytes()).hexdigest()==entry['sha256'], f'Original theme asset differs: {asset}'
 posts=list((ROOT/'content/posts').glob('*.md'))
 assert len(posts)==108, f'Expected 108 posts; got {len(posts)}'
 for md in posts:
@@ -43,6 +46,18 @@ for file in out.rglob('*.html'):
     assert 'buy.stripe.com' not in str(soup), f'Legacy payment: {file}'
     assert '收款码' not in unquote(str(soup)), f'Legacy donation QR: {file}'
     assert not any(s in soup.get_text() for s in ['可否捐獻','可否捐贈','捐個款','賞口飯','捐款時刻']), f'Legacy donation appeal: {file}'
+# Every post must remain reachable through the original ten-post pagination.
+listed=[]
+for page in [out/'index.html', *sorted((out/'page').glob('*/index.html'))]:
+    soup=BeautifulSoup(page.read_text(),'html.parser')
+    cards=soup.select('article.post-list-thumb')
+    assert 0 < len(cards) <= 10, f'Original pagination changed: {page}'
+    listed.extend(card['data-id'] for card in cards)
+expected={str(yaml.safe_load(p.read_text().split('---',2)[1])['id']) for p in posts}
+assert len(listed)==len(expected) and set(listed)==expected, 'Pagination loses or duplicates articles'
+home=BeautifulSoup((out/'index.html').read_text(),'html.parser')
+assert 'wp-theme-sakura-340' in home.body.get('class',[]), 'Original Sakura shell missing'
+assert not any(x in home.get_text() for x in ['一張卡，','多一種生活的可能','THE FIELD NOTES','NO CARD, NO FUN.']), 'Unrequested homepage design returned'
 report={'posts':len(posts),'pages':len(list(out.rglob('*.html'))),'broken_local_links':issues}
 (ROOT/'verification.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print(json.dumps(report,ensure_ascii=False,indent=2))
