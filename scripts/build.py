@@ -17,13 +17,13 @@ from bs4 import BeautifulSoup
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 ROOT = Path(__file__).resolve().parents[1]
-HOSTS = {'wk.yr.al','wkbhjlq.tw','www.wkbhjlq.tw','jsdelivr.wkbhjlq.tw','air.wkbhjlq.tw'}
+HOSTS = {'card.yr.al','wk.yr.al','wkbhjlq.tw','www.wkbhjlq.tw','jsdelivr.wkbhjlq.tw','air.wkbhjlq.tw'}
 TAGS = {'p','a','img','h1','h2','h3','h4','h5','h6','strong','em','b','i','ul','ol','li','blockquote','pre','code','br','hr','table','thead','tbody','tr','td','th','del','s','sup','sub','figure','figcaption','details','summary','div','span'}
 
 def main():
     args = argparse.ArgumentParser()
     args.add_argument('--base-path',default='')
-    args.add_argument('--site-url',default='https://wk.yr.al')
+    args.add_argument('--site-url',default='https://card.yr.al')
     opts = args.parse_args()
     base = opts.base_path.rstrip('/')
     site = opts.site_url.rstrip('/')
