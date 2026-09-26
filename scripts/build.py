@@ -27,6 +27,9 @@ def main():
     opts = args.parse_args()
     base = opts.base_path.rstrip('/')
     site = opts.site_url.rstrip('/')
+    # Pages reports HTTP while the first custom-domain certificate is pending.
+    if site.startswith('http://') and urlsplit(site).hostname not in {'localhost','127.0.0.1'}:
+        site = 'https://' + site[len('http://'):]
     out = ROOT/'dist'
     if out.exists(): shutil.rmtree(out)
     shutil.copytree(ROOT/'assets',out)
